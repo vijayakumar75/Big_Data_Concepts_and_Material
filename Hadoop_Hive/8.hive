@@ -1,0 +1,33 @@
+DROP TABLE IF EXISTS master;
+CREATE EXTERNAL TABLE IF NOT EXISTS master(id STRING, byear INT, bmonth INT,
+bday INT, bcountry STRING, bstate STRING, bcity STRING, dyear INT, dmonth
+INT, dday INT, dcountry STRING, dstate STRING, dcity STRING, fname STRING,
+lname STRING, name STRING, weight INT, height INT, bats STRING, throws
+STRING, debut STRING, finalgame STRING, retro STRING, bbref STRING) ROW
+FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/home/hduser/hivetest/master';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Master.csv' INTO TABLE master;
+
+DROP TABLE IF EXISTS batting;
+CREATE EXTERNAL TABLE IF NOT EXISTS batting(id STRING, year INT, team STRING,
+league STRING, games INT, ab INT, runs INT, hits INT, doubles INT, triples
+INT, homeruns INT, rbi INT, sb INT, cs INT, walks INT, strikeouts INT, ibb
+INT, hbp INT, sh INT, sf INT, gidp INT) ROW FORMAT DELIMITED FIELDS
+TERMINATED BY ',' LOCATION '/home/hduser/hivetest/batting';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Batting.csv' INTO TABLE batting;
+
+
+
+
+select a.bmonth,a.bstate,SUM(c.hits)/SUM(b.bats) hitBats
+from (select bmonth,bstate from master
+	  WHERE bmonth is NOT NULL and bstate is NOT NULL 
+      group by bmonth,bstate
+      having count(id) >=3) a
+join master b on a.bstate=b.bstate and a.bmonth = b.bmonth
+join batting c on b.id = c.id
+group by a.bmonth,a.bstate
+order by hitBats 
+limit 10;
+

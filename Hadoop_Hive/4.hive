@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS fielding;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS fielding
+(playerID STRING ,yearID INT ,teamID STRING ,lgID STRING ,
+POS STRING ,G INT ,GS INT , InnOuts INT , PO INT,A INT, E INT,	
+DP INT , PB INT	, WP INT ,SB INT ,CS INT , ZR INT ) ROW
+FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/home/hduser/hivetest/fielding';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Fielding.csv' INTO TABLE fielding;
+
+
+SELECT teamID,yearID, SUM(E) as cnt FROM fielding
+WHERE yearID = 2001
+GROUP BY teamID,yearID
+ORDER BY cnt DESC
+limit 10;

@@ -1,0 +1,24 @@
+DROP TABLE IF EXISTS Weather;
+CREATE EXTERNAL TABLE IF NOT EXISTS Weather(
+
+Year INT, Month INT, Day INT, TimeCST STRING, TemperatureF DOUBLE, Dew_PointF DOUBLE, Humidity INT, 
+Sea_Level_PressureIn INT, VisibilityMPH INT, Wind_Direction STRING,	Wind_SpeedMPH INT,
+Gust_SpeedMPH DOUBLE, PrecipitationIn DOUBLE, Events STRING, Conditions STRING,	WindDirDegrees INT,	DateUTC STRING
+
+) ROW FORMAT DELIMITED FIELDS
+TERMINATED BY ',' LOCATION '/home/hduser/final/Weather';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/final/Weather.csv' INTO TABLE Weather;
+
+select w.wind_direction as most_common_wd, w.cnt
+from (
+       select wind_direction, count(*) as cnt
+       from weather 
+       group by wind_direction 
+       order by cnt desc
+     ) w
+limit 1;
+ 
+ 
+ 
+ 

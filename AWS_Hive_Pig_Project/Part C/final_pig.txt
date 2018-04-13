@@ -1,0 +1,11 @@
+people = LOAD 's3://final-aws/input/people.csv' using PigStorage(',');
+
+A = FOREACH people GENERATE (int)$3 AS age,$6 AS addressStreet;
+
+B = GROUP A BY (age,addressStreet);
+
+C = FOREACH B GENERATE group AS combo, COUNT(A) as cnt;
+
+sorted = ORDER C by cnt DESC;
+
+STORE sorted INTO 's3://final-aws/output' USING PigStorage(',');

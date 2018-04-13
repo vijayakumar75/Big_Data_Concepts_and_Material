@@ -1,0 +1,36 @@
+1. a.low temp count was = 35
+   b.high temo count was = 14
+   So LOW TEMP were most frequent according the conditions specfied.
+
+2. 
+
+3. South 17644 times
+
+4. June , with 185 inches of precipitation
+
+5.
+
+6. 8:00 AM's are what i found to be the coldest.
+
+7. (2003,4,15) is highest temperature swing, with 42 degrees almost
+
+8.
+
+9. (9, 8.49668165) (8,8.49625) 9 AM's are calmest in terms of windspeed. followed by 8
+
+10.
+
+12. 3 perfect days with those conditions
+
+13.(2010,10,26) , 28.79 lowest
+   (2005, 1, 17) , 30.91 highest
+
+15. (95, 5), (17,5) are a tie 5 times each
+
+18. (WNW, Overcast), 207)  (SSW, Clear), 207) There is a tie
+
+19. (1, {19, 21}, 3)
+   (Months, {times in military} , counts of ideal temperature range(49.5 - 51.5)
+    will have one for each month
+
+20. (1062) days

@@ -1,0 +1,93 @@
+/* 1*/
+SELECT Product_Category, COUNT(*) as Number FROM Tb_Product
+GROUP BY Product_Category;
+
+/* 2*/
+SELECT City,Count(*) AS Number_Of_Consumers FROM Tb_Consumer
+GROUP BY City HAVING COUNT(*) >= 5
+
+/* 3*/
+
+SELECT Tb_Supplier.City,COUNT(Distinct TB_Offers.Prod_ID)
+FROM Tb_Supplier,TB_Offers
+WHERE Tb_Supplier.Supp_ID = TB_Offers.Supp_ID
+GROUP BY Tb_Supplier.City
+
+/* 4 STAR*/
+SELECT Tb_Supplier.State,COUNT(Distinct Tb_Supplier.Supp_ID) AS Suppliers
+FROM Tb_Supplier,TB_Offers
+WHERE Tb_Supplier.Supp_ID =TB_Offers.Supp_ID and TB_Offers.Prod_ID=
+(SELECT Tb_Product.Prod_ID FROM Tb_Product WHERE Tb_Product.Name ='Auto')
+GROUP BY Tb_Supplier.State
+
+
+/* 5 */ 
+SELECT Distinct Tb_Product.Name,TB_Offers.Quantity,Tb_Supplier.City
+FROM Tb_Product,TB_Offers,Tb_Supplier
+WHERE TB_Offers.Prod_ID = Tb_Product.Prod_ID AND Tb_Supplier.Supp_ID = Tb_Offers.Supp_ID
+ORDER BY Tb_Product.Name
+
+/* 6 */
+SELECT Tb_Supplier.Name,Tb_Supplier.City,Tb_Transactions.Quantity
+FROM Tb_Transactions,Tb_Supplier
+WHERE Tb_Transactions.Prod_ID = (SELECT Prod_ID FROM Tb_Product WHERE Name ='TV')
+GROUP BY Tb_Supplier.City,Tb_Supplier.Name,Tb_Transactions.Quantity
+
+
+/* 7 */ 
+SELECT Tb_Supplier.Name AS Supplier, Tb_Product.Name AS Product, Tb_Consumer.Name as Consumer
+,COUNT(Tb_Transactions.Prod_Id) as total
+FROM Tb_Supplier,Tb_Product, Tb_Consumer, Tb_Transactions
+WHERE Tb_Supplier.Supp_ID = Tb_Transactions.Supp_ID AND
+  Tb_Product.Prod_ID = Tb_Transactions.Prod_ID AND
+  Tb_Consumer.Con_ID = Tb_Transactions.Con_ID
+GROUP BY Tb_Supplier.Name,Tb_Product.Name,Tb_Consumer.Name
+
+
+/* 8 */
+SELECT Tb_Supplier.Name AS Supplier,Tb_Product.Name AS Product, Tb_Consumer.Name AS Consumer,
+COUNT(Tb_Transactions.Prod_ID) AS Total
+FROM Tb_Supplier,Tb_Product,Tb_Consumer,Tb_Transactions
+WHERE Tb_Supplier.Supp_ID = Tb_Transactions.Supp_ID AND
+Tb_Product.Prod_ID = Tb_Transactions.Prod_ID AND
+Tb_Consumer.Con_ID = Tb_Transactions.Con_ID AND
+Tb_Consumer.City!= Tb_Supplier.City
+Group BY Tb_Supplier.Name, Tb_Product.Name,Tb_Consumer.Name
+
+/* 9 */
+SELECT DISTINCT Tb_Supplier.State
+FROM Tb_Supplier,Tb_Consumer
+GROUP BY Tb_Supplier.State,Tb_Consumer.State
+HAVING COUNT(DISTINCT Tb_Supplier.Supp_ID)>COUNT(DISTINCT Tb_Consumer.Con_ID)
+
+/* 10 */
+SELECT
+COALESCE(c.Consumers, 0) AS Consumers,
+COALESCE(s.city, c.city) AS city,
+COALESCE(s.state, c.state) AS state,
+COALESCE(s.Suppliers, 0) AS Suppliers
+FROM (
+      SELECT
+	Tb_Supplier.City,
+	Tb_Consumer.State,
+	COUNT(Tb_Consumer.Name) AS Consumers
+            
+      FROM Tb_Supplier
+      GROUP BY
+            Tb_Supplier.City
+          , Tb_Supplier.State
+) AS s
+      FULL OUTER JOIN (
+            SELECT
+                 Tb_Supplier.City,
+		 Tb_Consumer.State,
+		 COUNT(Tb_Consumer.Name) AS Consumers
+            FROM Tb_Consumer
+            GROUP BY
+                  Tb_Consumer.City
+                , Tb_Consumer.State
+      ) AS c ON c.state = s.state
+                  AND c.city = s.city
+
+
+

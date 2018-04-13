@@ -1,0 +1,57 @@
+DROP TABLE IF EXISTS fielding;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS fielding
+(playerID STRING ,yearID INT ,teamID STRING ,lgID STRING ,
+POS STRING ,G INT ,GS INT , InnOuts INT , PO INT,A INT, E INT,	
+DP INT , PB INT	, WP INT ,SB INT ,CS INT , ZR INT ) ROW
+FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/home/hduser/hivetest/fielding';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Fielding.csv' INTO TABLE fielding;
+
+
+DROP TABLE IF EXISTS batting;
+CREATE EXTERNAL TABLE IF NOT EXISTS batting(id STRING, year INT, team STRING,
+league STRING, games INT, ab INT, runs INT, hits INT, doubles INT, triples
+INT, homeruns INT, rbi INT, sb INT, cs INT, walks INT, strikeouts INT, ibb
+INT, hbp INT, sh INT, sf INT, gidp INT) ROW FORMAT DELIMITED FIELDS
+TERMINATED BY ',' LOCATION '/home/hduser/hivetest/batting';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Batting.csv' INTO TABLE batting;
+
+SELECT
+a.playerID AS ID,
+    a.yearID AS yearID,
+    (b.HAB - a.EG) AS `HABEG`
+FROM 
+    (SELECT
+        playerID,
+        yearID,
+        (SUM(E)/SUM(G)) AS EG
+    FROM fielding
+    WHERE (
+            yearID >= 2005
+            AND yearID <= 2009
+            AND G > 20 
+			AND E > 0
+			AND E IS NOT NULL
+            )GROUP BY playerID,yearID
+    ) AS a
+JOIN
+    (SELECT
+        id,
+        year,
+        (SUM(hits)/SUM(ab)) AS HAB
+    FROM batting
+    WHERE( 
+            year >= 2005
+            AND year <= 2009 
+            AND ab > 40
+			AND hits > 0
+			AND hits IS NOT NULL
+			
+            ) GROUP BY id,year
+
+    ) AS b ON a.playerID = b.id AND a.yearID = b.year
+	ORDER BY HABEG DESC
+	LIMIT 3;
+		

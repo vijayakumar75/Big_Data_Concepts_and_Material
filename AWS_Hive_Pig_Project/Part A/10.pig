@@ -1,0 +1,2 @@
+Weather = LOAD 'hdfs:/home/hduser/final/Weather.csv' USING PigStorage(',');
+A = FOREACH Weather GENERATE (int)$0 AS year, (int)$1 AS month, (int)$2 AS day, (int)$4 AS temp, (chararray)$14 AS cond, (double)$5 as dewpoint , (double)$10 as wind;

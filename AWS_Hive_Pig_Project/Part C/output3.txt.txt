@@ -1,0 +1,18 @@
+LOCAL MACHINE
+correct answer below in 28 minutes and 34 seconds:
+
+59,Turino,52
+40,Danebridge,52
+20,Holybread,51
+57,Goshen View,50
+31,El Moro,50
+67,Wiggin,50
+18,Straford,50
+74,Los Medanos,50
+41,Kass,50
+73,Iglehart,50
+
+
+AWS 
+correct answer outside in part file, and it took 5 minutes and 46 seconds with 
+16 nodes and 1 master

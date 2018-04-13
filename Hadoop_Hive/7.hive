@@ -1,0 +1,33 @@
+DROP TABLE IF EXISTS batting;
+CREATE EXTERNAL TABLE IF NOT EXISTS batting(id STRING, year INT, team STRING,
+league STRING, games INT, ab INT, runs INT, hits INT, doubles INT, triples
+INT, homeruns INT, rbi INT, sb INT, cs INT, walks INT, strikeouts INT, ibb
+INT, hbp INT, sh INT, sf INT, gidp INT) ROW FORMAT DELIMITED FIELDS
+TERMINATED BY ',' LOCATION '/home/hduser/hivetest/batting';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Batting.csv' INTO TABLE batting;
+
+
+
+
+DROP TABLE IF EXISTS master;
+CREATE EXTERNAL TABLE IF NOT EXISTS master(id STRING, byear INT, bmonth INT,
+bday INT, bcountry STRING, bstate STRING, bcity STRING, dyear INT, dmonth
+INT, dday INT, dcountry STRING, dstate STRING, dcity STRING, fname STRING,
+lname STRING, name STRING, weight INT, height INT, bats STRING, throws
+STRING, debut STRING, finalgame STRING, retro STRING, bbref STRING) ROW
+FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/home/hduser/hivetest/master';
+
+LOAD DATA INPATH 'hdfs:/home/hduser/hivetest/Master.csv' INTO TABLE master;
+
+
+SELECT a.bcity, a.bstate, SUM(b.combo) as total
+FROM master a JOIN
+     (SELECT id, SUM(doubles) + SUM(triples) as combo
+      FROM batting 
+      GROUP by id
+     ) b 
+     ON a.id = b.id
+GROUP by a.bcity,a.bstate
+ORDER BY total DESC
+LIMIT 5;
